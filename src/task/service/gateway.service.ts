@@ -23,7 +23,6 @@ export class TaskGatewayService {
     });
 
     // get token in the socket header
-
     try {
       clientToken = await this.jwtService.verifyToken(
         getToken(socket.request as Request),
@@ -33,12 +32,13 @@ export class TaskGatewayService {
       socket.client._disconnect();
       return;
     }
-
+    // save a reference to the new socket received
     this.connectedClients.set(clientToken.id, socket);
   }
 
-  streamTask(user: string, event, data: Task) {
+  streamTask(user: string, event: string, data: Task) {
     try {
+      // get a reference to the user socket stored in Map
       const socket = this.connectedClients.get(user);
       if (socket) socket.emit(event, data);
     } catch (error) {

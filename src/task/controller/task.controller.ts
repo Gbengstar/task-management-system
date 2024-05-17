@@ -40,15 +40,21 @@ export class TaskController {
   @Post()
   async createTask(
     @Body(new ObjectValidationPipe(createTaskValidator)) task: Task,
-    @TokenDecorator() { id }: TokenDataDto,
+    @TokenDecorator() { id: user }: TokenDataDto,
   ) {
-    task.user = id;
+    // add the user id to the request body
+    task.user = user;
+
+    // create task data and persist in database
     const createdTask = await this.taskService.create(task);
+
+    // stream created task data to client through websocket event
     this.gatewayService.streamTask(
       task.user,
       TaskStreamEventEnum.CREATE_TASK,
       createdTask.toJSON(),
     );
+
     return createdTask;
   }
 

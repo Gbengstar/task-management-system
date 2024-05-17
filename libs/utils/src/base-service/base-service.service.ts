@@ -10,6 +10,7 @@ import {
 } from 'mongoose';
 import { PaginationDto } from '../dto/utils.dto';
 
+// All methods that could be shared among all services are created here
 export abstract class BaseService<C> {
   constructor(readonly Model: Model<C>) {}
 
@@ -38,6 +39,11 @@ export abstract class BaseService<C> {
       throw new BadRequestException(e.message);
     }
   }
+
+  async findOne(data: FilterQuery<C>, populate?: Array<PopulateOptions>) {
+    return this.Model.findOne(data).populate(populate);
+  }
+
   async findOneOrErrorOut(
     data: FilterQuery<C>,
     populate?: Array<PopulateOptions>,

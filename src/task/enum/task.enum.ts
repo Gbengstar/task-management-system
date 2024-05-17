@@ -6,6 +6,4 @@ export enum TaskPriorityEnum {
 
 export enum TaskStreamEventEnum {
   CREATE_TASK = 'create:task',
-  UPDATE_TASK = 'update:task',
-  DELETE_TASK = 'delete:task',
 }

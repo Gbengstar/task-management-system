@@ -1,11 +1,23 @@
 import { AuthService } from './../service/auth.service';
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { ObjectValidationPipe } from '../../../libs/pipes/src';
-import { signUpValidator } from '../validator/auth.validator';
-import { AuthDto } from '../dto/auth.dto';
+import {
+  changePasswordValidator,
+  signUpValidator,
+} from '../validator/auth.validator';
+import { AuthDto, ChangePasswordDto } from '../dto/auth.dto';
 import { HashService } from '../../../libs/utils/src/hash/hash.service';
 import { TokenDataDto } from '../../../libs/authentication/src/dto/authentication.dto';
 import { JWTService } from '../../../libs/authentication/src';
+import { TokenDecorator } from '../../../libs/authentication/src/decorator/authentication.decorator';
+import { AuthCheckGuard } from '../guard/sign-up.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -15,11 +27,16 @@ export class AuthController {
   ) {}
 
   @Post('sign-up')
+  // AuthCheckGuard check if username already exist
+  @UseGuards(AuthCheckGuard)
   async signUp(
     @Body(new ObjectValidationPipe(signUpValidator))
     singUpData: AuthDto,
   ) {
+    // hash password
     singUpData.password = await HashService.hash(singUpData.password);
+
+    // create auth data and persist in the database
     const { username } = await this.authService.create(singUpData);
     return { username };
   }
@@ -49,21 +66,25 @@ export class AuthController {
 
   @Post('change-password')
   async changePassword(
-    @Body(new ObjectValidationPipe(signUpValidator))
-    singUpData: AuthDto,
+    @TokenDecorator() { id }: TokenDataDto,
+    @Body(new ObjectValidationPipe(changePasswordValidator))
+    { oldPassword, newPassword }: ChangePasswordDto,
   ) {
-    singUpData.password = await HashService.hash(singUpData.password);
-    const auth = await this.authService.create(singUpData);
-    return auth;
-  }
+    const auth = await this.authService.findOneOrErrorOut({ _id: id });
 
-  @Post('forget-password')
-  async forgetPassword(
-    @Body(new ObjectValidationPipe(signUpValidator))
-    singUpData: AuthDto,
-  ) {
-    singUpData.password = await HashService.hash(singUpData.password);
-    const auth = await this.authService.create(singUpData);
-    return auth;
+    // check if old password is valid
+    const isValidPassword = await HashService.verifyHash(
+      auth.password,
+      oldPassword,
+    );
+
+    if (!isValidPassword) {
+      throw new BadRequestException('invalid credential');
+    }
+
+    auth.password = await HashService.hash(newPassword);
+
+    await auth.save();
+    return 'password changed successfully';
   }
 }
