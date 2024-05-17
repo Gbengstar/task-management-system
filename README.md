@@ -29,34 +29,48 @@
 ## Installation
 
 ```bash
-$ npm install
+$ yarn
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ yarn start
 
 # watch mode
-$ npm run start:dev
+$ yarn start:dev
 
 # production mode
-$ npm run start:prod
+$ yarn start:prod
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ yarn test
 
 # e2e tests
-$ npm run test:e2e
+$ yarn test:e2e
 
 # test coverage
-$ npm run test:cov
+$ yarn test:cov
 ```
+
+## Api Documentation
+
+<a href="https://documenter.getpostman.com/view/33875381/2sA3JT3JYx" target="_blank">Click here to open this project Postman documentation</a>
+
+## Web socket
+
+Websocket connection can be established through http://localhost:3000
+
+Real time task events can be listened to on <b>create:task</b> event listener
+
+## Data Model
+
+<a href="https://docs.google.com/document/d/1KLIrnvXlOSQii2se_xv7EVKr5YNd0dtbZTMOxMvr424/edit?usp=sharing" target="_blank">Click here to open this project Data Model Documentation</a>
 
 ## Support
 
