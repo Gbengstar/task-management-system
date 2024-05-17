@@ -1,0 +1,25 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@app/jwt/(.*)": "<rootDir>/../libs/jwt/src/$1",
+    "@app/jwt": "<rootDir>/../libs/jwt/src",
+    "@app/authentication/(.*)": "<rootDir>/../libs/authentication/src/$1",
+    "@app/authentication": "<rootDir>/../libs/authentication/src",
+    "@app/pipes/(.*)": "<rootDir>/../libs/pipes/src/$1",
+    "@app/pipes": "<rootDir>/../libs/pipes/src",
+    "@app/utils/(.*)": "<rootDir>/../libs/utils/src/$1",
+    "@app/utils": "<rootDir>/../libs/utils/src",
+    "@app/database/(.*)": "<rootDir>/../libs/database/src/$1",
+    "@app/database": "<rootDir>/../libs/database/src"
+  }
+}
